@@ -7,6 +7,7 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
@@ -25,13 +26,23 @@ public class CDVCutout extends CordovaPlugin {
 
     private void has(CallbackContext callbackContext) {
         boolean cutout = false;
+        int insetTop = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             DisplayCutout displayCutout = cordova.getActivity().getWindow().getDecorView().getRootWindowInsets().getDisplayCutout();
             System.out.println(displayCutout);
             if (displayCutout != null) {
+                insetTop = displayCutout.getBoundingRects().get(0).height();
                 cutout = true;
             }
         }
-        callbackContext.success(cutout ? "true" : "false");
+        JSONObject cutoutInfo = new JSONObject();
+        try {
+            cutoutInfo.put("cutout", cutout);
+            cutoutInfo.put("insetTop", insetTop);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        callbackContext.success(cutoutInfo);
     }
 }
