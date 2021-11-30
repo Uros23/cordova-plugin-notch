@@ -27,18 +27,22 @@ public class CDVCutout extends CordovaPlugin {
     private void has(CallbackContext callbackContext) {
         boolean cutout = false;
         int insetTop = 0;
+        int insetBottom = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             DisplayCutout displayCutout = cordova.getActivity().getWindow().getDecorView().getRootWindowInsets().getDisplayCutout();
-            System.out.println(displayCutout);
             if (displayCutout != null) {
                 insetTop = displayCutout.getBoundingRects().get(0).height();
+                insetBottom = cordova.getActivity().getWindow().getDecorView().getRootWindowInsets().getStableInsetBottom();
                 cutout = true;
             }
+            System.out.println(insetTop);
+            System.out.println(insetBottom);
         }
         JSONObject cutoutInfo = new JSONObject();
         try {
             cutoutInfo.put("cutout", cutout);
             cutoutInfo.put("insetTop", insetTop);
+            cutoutInfo.put("insetBottom", insetBottom);
         } catch (JSONException e) {
             e.printStackTrace();
         }
